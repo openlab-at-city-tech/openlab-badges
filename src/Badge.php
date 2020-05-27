@@ -1,8 +1,19 @@
 <?php
+/**
+ * Badge class.
+ */
 
 namespace OpenLab\Badges;
 
+/**
+ * Badge class.
+ */
 class Badge implements Grantable {
+	/**
+	 * Badge data.
+	 *
+	 * @var array
+	 */
 	private $data = array(
 		'id'         => null,
 		'name'       => null,
@@ -12,12 +23,22 @@ class Badge implements Grantable {
 		'link'       => null,
 	);
 
+	/**
+	 * Constructor.
+	 *
+	 * @param int $badge_id Optional. ID of the badge (term_id).
+	 */
 	public function __construct( $badge_id = null ) {
 		if ( $badge_id ) {
 			$this->populate( $badge_id );
 		}
 	}
 
+	/**
+	 * Populates a badge from the database.
+	 *
+	 * @param int $badge_id ID of the badge (term_id).
+	 */
 	private function populate( $badge_id ) {
 		$term = get_term( $badge_id, 'openlab_badge' );
 		if ( ! $term ) {
@@ -45,6 +66,11 @@ class Badge implements Grantable {
 		}
 	}
 
+	/**
+	 * Saves a badge to the database.
+	 *
+	 * @return bool
+	 */
 	public function save() {
 		$term_id = $this->get_id();
 
@@ -76,62 +102,135 @@ class Badge implements Grantable {
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
 		update_term_meta( $term_id, 'image', $this->get_image() );
 		update_term_meta( $term_id, 'link', $this->get_link() );
+
+		return true;
 	}
 
+	/**
+	 * Deletes a badge object from the database.
+	 *
+	 * @return bool|int|\WP_Error True on success, false if term does not exist. Zero on attempted
+	 *                           deletion of default Category. WP_Error if the taxonomy does not exist.
+	 */
 	public function delete() {
 		return wp_delete_term( $this->get_id(), 'openlab_badge' );
 	}
 
+	/**
+	 * Sets the ID of a badge.
+	 *
+	 * @param int $id ID.
+	 */
 	public function set_id( $id ) {
 		$this->data['id'] = (int) $id;
 	}
 
+	/**
+	 * Sets the name of a badge.
+	 *
+	 * @param string $name Name.
+	 */
 	public function set_name( $name ) {
 		$this->data['name'] = $name;
 	}
 
+	/**
+	 * Sets the short name of a badge.
+	 *
+	 * @param string $short_name Short name.
+	 */
 	public function set_short_name( $short_name ) {
 		$this->data['short_name'] = $short_name;
 	}
 
+	/**
+	 * Sets the slug of a badge.
+	 *
+	 * @param string $slug Slug.
+	 */
 	public function set_slug( $slug ) {
 		$this->data['slug'] = $slug;
 	}
 
+	/**
+	 * Sets the image URL of a badge.
+	 *
+	 * @param string $image URL.
+	 */
 	public function set_image( $image ) {
 		$this->data['image'] = $image;
 	}
 
+	/**
+	 * Sets the link of a badge.
+	 *
+	 * @param string $link URL.
+	 */
 	public function set_link( $link ) {
 		$this->data['link'] = $link;
 	}
 
+	/**
+	 * Gets the ID of a badge.
+	 *
+	 * @return int
+	 */
 	public function get_id() {
 		return (int) $this->data['id'];
 	}
 
+	/**
+	 * Gets the name for a badge.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return $this->data['name'];
 	}
 
+	/**
+	 * Gets the "short name" for a badge.
+	 *
+	 * Short names are used in breadcrumbs and other places where an abbreviation is needed.
+	 *
+	 * @return string
+	 */
 	public function get_short_name() {
 		return $this->data['short_name'];
 	}
 
+	/**
+	 * Gets the slug for a badge.
+	 *
+	 * @return string
+	 */
 	public function get_slug() {
 		return $this->data['slug'];
 	}
 
+	/**
+	 * Gets the image URL for a badge.
+	 *
+	 * @return string
+	 */
 	public function get_image() {
 		return $this->data['image'];
 	}
 
+	/**
+	 * Gets the link for a badge.
+	 *
+	 * @return string
+	 */
 	public function get_link() {
 		return $this->data['link'];
 	}
 
 	/**
-	 * @todo Tooltip. See http://accessibility.athena-ict.com/aria/examples/tooltip.shtml
+	 * Builds the HTML for a badge avatar.
+	 *
+	 * @param int    $group_id Group ID.
+	 * @param string $context  'single' or 'directory'.
 	 */
 	public function get_avatar_badge_html( $group_id, $context = 'single' ) {
 		$group = groups_get_group( $group_id );
@@ -163,6 +262,9 @@ class Badge implements Grantable {
 		return $html;
 	}
 
+	/**
+	 * Outputs the HTML for editing a badge.
+	 */
 	public function edit_html() {
 		$slug       = $this->get_slug();
 		$name       = $this->get_name();
@@ -176,27 +278,38 @@ class Badge implements Grantable {
 
 		?>
 		<label>
-			<span class="badge-field-label"><?php echo esc_html( 'Name', 'openlab-badges' ); ?></span>
+			<span class="badge-field-label"><?php esc_html_e( 'Name', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][name]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $name ); ?>" />
 		</label>
 
 		<label>
-			<span class="badge-field-label"><?php echo esc_html( 'Short Name', 'openlab-badges' ); ?></span>
+			<span class="badge-field-label"><?php esc_html_e( 'Short Name', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][short_name]" id="badge-<?php echo esc_attr( $slug ); ?>-short-name" value="<?php echo esc_attr( $short_name ); ?>" />
 		</label>
 
 		<label>
-			<span class="badge-field-label"><?php echo esc_html( 'Image URL', 'openlab-badges' ); ?></span>
+			<span class="badge-field-label"><?php esc_html_e( 'Image URL', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][image]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_image() ); ?>" />
 		</label>
 
 		<label>
-			<span class="badge-field-label"><?php echo esc_html( 'Link', 'openlab-badges' ); ?></span>
+			<span class="badge-field-label"><?php esc_html_e( 'Link', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][link]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_link() ); ?>" />
 		</label>
 		<?php
 	}
 
+	/**
+	 * Gets a list of badges.
+	 *
+	 * @param array $args {
+	 *     Function arguments.
+	 *
+	 *     @type bool   $hide_empty Whether to hide empty badges (badges not associated with a group).
+	 *     @type string $orderby    Badge orderby.
+	 *     @type string $order      Badge order.
+	 *   }
+	 */
 	public static function get( $args = array() ) {
 		$r = array_merge(
 			array(
