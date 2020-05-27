@@ -1,14 +1,15 @@
 <?php
 /**
-Plugin Name: OpenLab Badges
-Description: BuddyPress group badges, for the City Tech OpenLab.
-Author: OpenLab at City Tech
-Version: 0.1
-Text Domain: openlab-badges
+ * Plugin Name: OpenLab Badges
+ * Description: BuddyPress group badges, for the City Tech OpenLab.
+ * Author: OpenLab at City Tech
+ * Version: 0.1
+ * Text Domain: openlab-badges
  */
 
 define( 'OLBADGES_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OLBADGES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'OLBADGES_VERSION', '0.1' );
 
 spl_autoload_register(
 	function( $class ) {

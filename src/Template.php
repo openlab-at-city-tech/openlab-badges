@@ -1,8 +1,19 @@
 <?php
+/**
+ * Template class.
+ */
 
 namespace OpenLab\Badges;
 
+/**
+ * Template class.
+ *
+ * Integrates into front-end.
+ */
 class Template {
+	/**
+	 * Initialize the Template class.
+	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
 
@@ -14,19 +25,33 @@ class Template {
 		add_action( 'groups_group_after_save', array( __CLASS__, 'save_group_settings' ) );
 	}
 
+	/**
+	 * Registers front-end assets.
+	 */
 	public static function register_scripts() {
-		wp_register_style( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/css/openlab-badges.css' );
-		wp_register_script( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/js/openlab-badges.js', array( 'jquery' ), false, true );
+		wp_register_style( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/css/openlab-badges.css', [], OLBADGES_VERSION );
+		wp_register_script( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/js/openlab-badges.js', [ 'jquery' ], OLBADGES_VERSION, true );
 	}
 
+	/**
+	 * Gets the avatar links for the header of a single group page.
+	 */
 	public static function avatar_links_single_group_header() {
 		self::avatar_links( 'single' );
 	}
 
+	/**
+	 * Gets the avatar links for the listing in a group directory.
+	 */
 	public static function avatar_links_group_directory() {
 		self::avatar_links( 'directory' );
 	}
 
+	/**
+	 * Gets a set of avatar links.
+	 *
+	 * @param string $context Context. 'single' or 'directory'.
+	 */
 	public static function avatar_links( $context = 'single' ) {
 		wp_enqueue_style( 'openlab-badges' );
 		wp_enqueue_script( 'openlab-badges' );
@@ -45,17 +70,26 @@ class Template {
 			$html .= '</ul>';
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $html;
 	}
 
+	/**
+	 * Filters bp_get_groups() args to account for badges.
+	 *
+	 * @param array $args Group query arguments.
+	 */
 	public static function filter_group_args( $args ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['group_badge'] ) || 'all' === $_GET['group_badge'] ) {
 			return $args;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$badge_id = intval( $_GET['group_badge'] );
 
 		// Tax query not currently supported for groups. See https://buddypress.trac.wordpress.org/ticket/4017.
+		// phpcs:disable
 		/*
 		$tq = isset( $args['tax_query'] ) ? $args['tax_query'] : array();
 
@@ -67,6 +101,7 @@ class Template {
 
 		$args['tax_query'] = $tq;
 		*/
+		// phpcs:enable
 
 		$objects_in_term = bp_get_objects_in_term( $badge_id, 'openlab_badge' );
 		if ( ! $objects_in_term ) {
@@ -82,6 +117,9 @@ class Template {
 		return $args;
 	}
 
+	/**
+	 * Gets the markup for the group admin area.
+	 */
 	public static function group_admin_markup() {
 		$group_id        = bp_get_current_group_id();
 		$badge_group     = new Group( $group_id );
@@ -105,7 +143,9 @@ class Template {
 				<li>
 					<input type="checkbox" value="<?php echo esc_attr( $badge->get_id() ); ?>" name="badge-selector[]" id="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>" <?php checked( in_array( $badge->get_id(), $group_badge_ids, true ) ); ?> />
 
+					<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php echo $badge->get_avatar_badge_html( $group_id ); ?>
+
 					<label for="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>">
 						<?php echo esc_html( $badge->get_name() ); ?>
 					</label>
@@ -138,7 +178,10 @@ class Template {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['openlab-badges-group-settings-nonce'], 'openlab_badges_group_settings' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = wp_unslash( $_POST['openlab-badges-group-settings-nonce'] );
+
+		if ( ! wp_verify_nonce( $nonce, 'openlab_badges_group_settings' ) ) {
 			return;
 		}
 
