@@ -1,8 +1,17 @@
 <?php
+/**
+ * Main App class.
+ */
 
 namespace OpenLab\Badges;
 
+/**
+ * App class.
+ */
 class App {
+	/**
+	 * Initialize the app.
+	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_taxonomy' ) );
 		add_action( 'map_meta_cap', array( __CLASS__, 'map_meta_cap' ), 10, 4 );
@@ -11,6 +20,9 @@ class App {
 		Admin::init();
 	}
 
+	/**
+	 * Register Badge taxonomy.
+	 */
 	public static function register_taxonomy() {
 		$labels = array(
 			'name'          => __( 'Badges', 'openlab-badges' ),
@@ -36,6 +48,18 @@ class App {
 		);
 	}
 
+	/**
+	 * Maps custom capabilities for 'badges'.
+	 *
+	 * Note that the function is intended for Multisite use only.
+	 *
+	 * @param array  $caps    Primitive caps.
+	 * @param string $cap     Meta cap being mapped.
+	 * @param int    $user_id User ID.
+	 * @param array  $args    Cap arguments.
+	 *
+	 * @return array $caps
+	 */
 	public static function map_meta_cap( $caps, $cap, $user_id, $args ) {
 		switch ( $cap ) {
 			case 'manage_badges':

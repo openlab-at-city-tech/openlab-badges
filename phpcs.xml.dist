@@ -4,6 +4,10 @@
 
 	<config name="testVersion" value="5.6-"/>
 
+	<rule ref="WordPress">
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+	</rule>
+
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
