@@ -1,8 +1,17 @@
 <?php
+/**
+ * Admin class.
+ */
 
 namespace OpenLab\Badges;
 
+/**
+ * Admin class.
+ */
 class Admin {
+	/**
+	 * Initializes admin functionality.
+	 */
 	public static function init() {
 		if ( ! current_user_can( 'manage_badges' ) ) {
 			return;
@@ -11,7 +20,14 @@ class Admin {
 		add_action( 'network_admin_menu', array( __CLASS__, 'admin_menu' ) );
 	}
 
+	/**
+	 * Sets up the admin menu.
+	 *
+	 * Also catches and routes POST requests.
+	 */
 	public static function admin_menu() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_POST['openlab_badges_manage_nonce'] ) ) {
 			self::process_save();
 		}
@@ -25,8 +41,11 @@ class Admin {
 		}
 
 		if ( ! empty( $_GET['badge-action'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			self::add_notice( wp_unslash( $_GET['badge-action'] ) );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		add_menu_page(
 			__( 'Badges', 'openlab-badges' ),
@@ -38,9 +57,12 @@ class Admin {
 		);
 	}
 
+	/**
+	 * Builds the admin panel markup.
+	 */
 	public static function admin_panel() {
-		wp_enqueue_style( 'openlab-badges-admin', OLBADGES_PLUGIN_URL . '/assets/css/admin.css' );
-		wp_enqueue_script( 'openlab-badges-admin', OLBADGES_PLUGIN_URL . '/assets/js/admin.js' );
+		wp_enqueue_style( 'openlab-badges-admin', OLBADGES_PLUGIN_URL . '/assets/css/admin.css', [], OLBADGES_VERSION );
+		wp_enqueue_script( 'openlab-badges-admin', OLBADGES_PLUGIN_URL . '/assets/js/admin.js', [], OLBADGES_VERSION, true );
 		wp_localize_script(
 			'openlab-badges-admin',
 			'OpenLabBadgesAdmin',
@@ -50,7 +72,7 @@ class Admin {
 		);
 
 		$badges      = Badge::get();
-		$empty_badge = new Badge;
+		$empty_badge = new Badge();
 		?>
 		<div class="wrap">
 			<h1><i class="dashicons dashicons-carrot"></i> <?php esc_html_e( 'Badges', 'openlab-badges' ); ?></h1>
@@ -87,6 +109,11 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * Adds a success/failure notice on save/delete.
+	 *
+	 * @param string $status Message type.
+	 */
 	protected static function add_notice( $status ) {
 		$type = 'success';
 		$text = '';
@@ -119,10 +146,16 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Fetches the admin URL for the Badges Dashboard page.
+	 */
 	protected static function admin_url() {
 		return network_admin_url( 'admin.php?page=openlab-badges' );
 	}
 
+	/**
+	 * Processes badge edits.
+	 */
 	protected static function process_save() {
 		check_admin_referer( 'openlab-badges-manage', 'openlab_badges_manage_nonce' );
 
@@ -134,6 +167,7 @@ class Admin {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$saved_badges = wp_unslash( $_POST['badges'] );
 
 		foreach ( $saved_badges as $saved_badge_id => $saved_badge ) {
@@ -149,6 +183,9 @@ class Admin {
 		wp_safe_redirect( $redirect_to );
 	}
 
+	/**
+	 * Processes badge creation.
+	 */
 	protected static function process_create() {
 		check_admin_referer( 'openlab-badges-create', 'openlab_badges_create_nonce' );
 
@@ -156,10 +193,11 @@ class Admin {
 			return;
 		}
 
-		if ( empty( $_POST['badges'] ) ) {
+		if ( empty( $_POST['badges']['_new'] ) ) {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$saved_badge = wp_unslash( $_POST['badges']['_new'] );
 
 		$badge = new Badge();
@@ -172,6 +210,9 @@ class Admin {
 		wp_safe_redirect( $redirect_to );
 	}
 
+	/**
+	 * Processes badge deletion.
+	 */
 	protected static function process_delete() {
 		check_admin_referer( 'openlab-badges-delete' );
 
@@ -179,7 +220,10 @@ class Admin {
 			return;
 		}
 
-		$badge_id = intval( $_GET['delete-badge'] );
+		$badge_id = isset( $_GET['delete-badge'] ) ? intval( $_GET['delete-badge'] ) : 0;
+		if ( ! $badge_id ) {
+			return;
+		}
 
 		$badge = new Badge( $badge_id );
 		$badge->delete();
