@@ -49,9 +49,13 @@ class Badge implements Grantable {
 		$term_id = $this->get_id();
 
 		if ( ! $term_id ) {
-			$term = wp_insert_term( $this->get_name(), 'openlab_badge', array(
-				'slug' => $this->get_slug(),
-			) );
+			$term = wp_insert_term(
+				$this->get_name(),
+				'openlab_badge',
+				array(
+					'slug' => $this->get_slug(),
+				)
+			);
 			if ( is_wp_error( $term ) ) {
 				return $term;
 			}
@@ -59,10 +63,14 @@ class Badge implements Grantable {
 			$term_id = (int) $term['term_id'];
 			$this->set_id( $term_id );
 		} else {
-			wp_update_term( $term_id, 'openlab_badge', array(
-				'name' => $this->get_name(),
-				'slug' => $this->get_slug(),
-			) );
+			wp_update_term(
+				$term_id,
+				'openlab_badge',
+				array(
+					'name' => $this->get_name(),
+					'slug' => $this->get_slug(),
+				)
+			);
 		}
 
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
@@ -143,13 +151,13 @@ class Badge implements Grantable {
 		}
 
 		$html  = '<div class="avatar-badge">';
-		$html .=   $badge_link_start;
-		$html .=     '<img class="badge-image" aria-describedby="' . esc_attr( $tooltip_id ) . '" src="' . esc_attr( $this->get_image() ) . '" alt="' . esc_attr( $this->get_name() ) . '" />';
-		$html .=   $badge_link_end;
+		$html .= $badge_link_start;
+		$html .= '<img class="badge-image" aria-describedby="' . esc_attr( $tooltip_id ) . '" src="' . esc_attr( $this->get_image() ) . '" alt="' . esc_attr( $this->get_name() ) . '" />';
+		$html .= $badge_link_end;
 
-		$html .=   '<div id="' . esc_attr( $tooltip_id ) . '" class="badge-tooltip" role="tooltip">';
-		$html .=     esc_html( $this->get_name() );
-		$html .=   '</div>';
+		$html .= '<div id="' . esc_attr( $tooltip_id ) . '" class="badge-tooltip" role="tooltip">';
+		$html .= esc_html( $this->get_name() );
+		$html .= '</div>';
 		$html .= '</div>';
 
 		return $html;
@@ -190,30 +198,42 @@ class Badge implements Grantable {
 	}
 
 	public static function get( $args = array() ) {
-		$r = array_merge( array(
-			'hide_empty' => false,
-			'orderby'    => 'name',
-			'order'      => 'ASC',
-		), $args );
+		$r = array_merge(
+			array(
+				'hide_empty' => false,
+				'orderby'    => 'name',
+				'order'      => 'ASC',
+			),
+			$args
+		);
 
-		$terms = get_terms( 'openlab_badge', array(
-			'hide_empty' => $r['hide_empty'],
-			'orderby'    => $r['orderby'],
-			'order'      => $r['order'],
-		) );
+		$terms = get_terms(
+			'openlab_badge',
+			array(
+				'hide_empty' => $r['hide_empty'],
+				'orderby'    => $r['orderby'],
+				'order'      => $r['order'],
+			)
+		);
 
 		// Override crummy filters.
-		usort( $terms, function( $a, $b ) {
-			if ( $a->name === $b->name ) {
-				return $a->term_id > $b->term_id;
+		usort(
+			$terms,
+			function( $a, $b ) {
+				if ( $a->name === $b->name ) {
+					return $a->term_id > $b->term_id;
+				}
+
+				return strnatcasecmp( $a->name, $b->name );
 			}
+		);
 
-			return strnatcasecmp( $a->name, $b->name );
-		} );
-
-		$badges = array_map( function( $term ) {
-			return new self( $term->term_id );
-		}, $terms );
+		$badges = array_map(
+			function( $term ) {
+				return new self( $term->term_id );
+			},
+			$terms
+		);
 
 		return $badges;
 	}

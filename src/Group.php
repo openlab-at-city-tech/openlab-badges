@@ -21,9 +21,12 @@ class Group {
 
 	public function get_badges() {
 		$terms  = wp_get_object_terms( $this->get_group_id(), 'openlab_badge' );
-		$badges = array_map( function( $term ) {
-			return new Badge( $term->term_id );
-		}, $terms );
+		$badges = array_map(
+			function( $term ) {
+				return new Badge( $term->term_id );
+			},
+			$terms
+		);
 		return $badges;
 	}
 

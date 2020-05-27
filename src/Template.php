@@ -33,7 +33,7 @@ class Template {
 
 		$group_id = bp_get_group_id();
 
-		$badge_group = new Group( $group_id );
+		$badge_group  = new Group( $group_id );
 		$group_badges = $badge_group->get_badges();
 
 		$html = '';
@@ -86,9 +86,12 @@ class Template {
 		$group_id        = bp_get_current_group_id();
 		$badge_group     = new Group( $group_id );
 		$group_badges    = $badge_group->get_badges();
-		$group_badge_ids = array_map( function( $group_badge ) {
-			return $group_badge->get_id();
-		}, $group_badges );
+		$group_badge_ids = array_map(
+			function( $group_badge ) {
+				return $group_badge->get_id();
+			},
+			$group_badges
+		);
 
 		$all_badges = Badge::get();
 
@@ -100,7 +103,7 @@ class Template {
 			<ul class="badge-selector">
 			<?php foreach ( $all_badges as $badge ) : ?>
 				<li>
-					<input type="checkbox" value="<?php echo esc_attr( $badge->get_id() ); ?>" name="badge-selector[]" id="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>" <?php checked( in_array( $badge->get_id(), $group_badge_ids, true ) ) ?> />
+					<input type="checkbox" value="<?php echo esc_attr( $badge->get_id() ); ?>" name="badge-selector[]" id="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>" <?php checked( in_array( $badge->get_id(), $group_badge_ids, true ) ); ?> />
 
 					<?php echo $badge->get_avatar_badge_html( $group_id ); ?>
 					<label for="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>">
@@ -114,7 +117,8 @@ class Template {
 
 		<?php else : ?>
 			<p><?php esc_html_e( 'You have not created any badges yet.', 'openlab-badges' ); ?></p>
-		<?php endif;
+			<?php
+		endif;
 	}
 
 	/**
@@ -146,9 +150,12 @@ class Template {
 
 		$badge_group     = new Group( $group->id );
 		$group_badges    = $badge_group->get_badges();
-		$group_badge_ids = array_map( function( $group_badge ) {
-			return $group_badge->get_id();
-		}, $group_badges );
+		$group_badge_ids = array_map(
+			function( $group_badge ) {
+				return $group_badge->get_id();
+			},
+			$group_badges
+		);
 
 		$to_grant  = array_diff( $badge_ids, $group_badge_ids );
 		$to_revoke = array_diff( $group_badge_ids, $badge_ids );

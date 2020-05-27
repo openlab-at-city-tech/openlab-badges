@@ -92,27 +92,30 @@ class Admin {
 		$text = '';
 
 		switch ( $status ) {
-			case 'updated' :
+			case 'updated':
 				$text = __( 'Badges successfully saved.', 'openlab-badges' );
-			break;
+				break;
 
-			case 'created' :
+			case 'created':
 				$text = __( 'Badge successfully created.', 'openlab-badges' );
-			break;
+				break;
 
-			case 'deleted' :
+			case 'deleted':
 				$text = __( 'Badge successfully deleted.', 'openlab-badges' );
-			break;
+				break;
 		}
 
 		if ( $text ) {
-			add_action( 'network_admin_notices', function() use ( $type, $text ) {
-				printf(
-					'<div class="notice notice-%s"><p>%s</p></div>',
-					esc_attr( $type ),
-					esc_html( $text )
-				);
-			} );
+			add_action(
+				'network_admin_notices',
+				function() use ( $type, $text ) {
+					printf(
+						'<div class="notice notice-%s"><p>%s</p></div>',
+						esc_attr( $type ),
+						esc_html( $text )
+					);
+				}
+			);
 		}
 	}
 
