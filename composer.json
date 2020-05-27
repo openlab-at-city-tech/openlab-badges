@@ -1,0 +1,11 @@
+{
+    "name": "livinglab/openlab-badges",
+    "type": "library",
+    "license": "GPLv3",
+    "require": {},
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "wp-coding-standards/wpcs": "*"
+    }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset name="OpenLab Badges">
+	<description>PHP CodeSniffer rules for OpenLab Badges.</description>
+
+	<config name="testVersion" value="5.6-"/>
+
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<rule ref="PHPCompatibilityWP"/>
+
+</ruleset>
