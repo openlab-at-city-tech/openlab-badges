@@ -2,7 +2,7 @@
 	var $badges;
 
 	$(document).ready(function(){
-		$badges = $('.avatar-badge');
+		$badges = $('.group-badge');
 
 		if ( !! ('ontouchstart' in window ) ) {
 			$badges.on('click', toggleTooltip);

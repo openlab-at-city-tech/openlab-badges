@@ -202,6 +202,7 @@ class Admin {
 
 		$badge = new Badge();
 		$badge->set_name( $saved_badge['name'] );
+		$badge->set_short_name( $saved_badge['short_name'] );
 		$badge->set_image( $saved_badge['image'] );
 		$badge->set_link( $saved_badge['link'] );
 		$badge->save();

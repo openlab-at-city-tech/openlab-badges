@@ -227,6 +227,42 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Builds the HTML for a badge flag.
+	 *
+	 * @param int    $group_id Group ID.
+	 * @param string $context  'single' or 'directory'.
+	 */
+	public function get_avatar_flag_html( $group_id, $context = 'single' ) {
+		$group = groups_get_group( $group_id );
+
+		$tooltip_id = 'badge-tooltip-' . $group->slug . '-' . $this->get_slug();
+
+		$badge_link_start = '';
+		$badge_link_end   = '';
+
+		if ( 'single' === $context ) {
+			$badge_link_start = sprintf(
+				'<a href="%s">',
+				esc_attr( $this->get_link() )
+			);
+
+			$badge_link_end = '</a>';
+		}
+
+		$html  = '<div class="group-badge">';
+		$html .= $badge_link_start;
+		$html .= esc_html( $this->get_short_name() );
+		$html .= $badge_link_end;
+
+		$html .= '<div id="' . esc_attr( $tooltip_id ) . '" class="badge-tooltip" role="tooltip">';
+		$html .= esc_html( $this->get_name() );
+		$html .= '</div>';
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	/**
 	 * Builds the HTML for a badge avatar.
 	 *
 	 * @param int    $group_id Group ID.

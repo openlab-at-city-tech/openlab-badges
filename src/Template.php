@@ -17,8 +17,10 @@ class Template {
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
 
-		add_action( 'bp_group_header_after_avatar', array( __CLASS__, 'avatar_links_single_group_header' ) );
-		add_action( 'bp_group_directory_after_avatar', array( __CLASS__, 'avatar_links_group_directory' ) );
+		//add_action( 'bp_group_header_after_avatar', array( __CLASS__, 'avatar_links_single_group_header' ) );
+		//add_action( 'bp_group_directory_after_avatar', array( __CLASS__, 'avatar_links_group_directory' ) );
+
+		//add_action( 'openlab_theme_after_group_description_directory', [ __CLASS__, 'badge_links_directory' ] );
 
 		add_filter( 'bp_before_has_groups_parse_args', array( __CLASS__, 'filter_group_args' ) );
 
@@ -66,6 +68,30 @@ class Template {
 			$html .= '<ul class="badge-links">';
 			foreach ( $group_badges as $group_badge ) {
 				$html .= '<li>' . $group_badge->get_avatar_badge_html( $group_id, $context ) . '</li>';
+			}
+			$html .= '</ul>';
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $html;
+	}
+
+	public static function badge_links_directory() {
+		wp_enqueue_style( 'openlab-badges' );
+		wp_enqueue_script( 'openlab-badges' );
+
+		$group_id = bp_get_group_id();
+
+		$badge_group  = new Group( $group_id );
+		$group_badges = $badge_group->get_badges();
+
+		$context = 'directory';
+
+		$html = '';
+		if ( $group_badges ) {
+			$html .= '<ul class="badge-links">';
+			foreach ( $group_badges as $group_badge ) {
+				$html .= '<li>' . $group_badge->get_avatar_flag_html( $group_id, $context ) . '</li>';
 			}
 			$html .= '</ul>';
 		}
@@ -182,6 +208,10 @@ class Template {
 		$nonce = wp_unslash( $_POST['openlab-badges-group-settings-nonce'] );
 
 		if ( ! wp_verify_nonce( $nonce, 'openlab_badges_group_settings' ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'grant_badges' ) ) {
 			return;
 		}
 

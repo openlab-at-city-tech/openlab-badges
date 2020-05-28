@@ -16,8 +16,6 @@ ul.badge-links {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	text-align: center;
-	width: 100%;
 }
 
 ul.badge-links li {
@@ -28,6 +26,17 @@ ul.badge-links li {
 
 ul.badge-links li:last-child {
 	margin-right: 0;
+}
+
+.group-badge {
+	background: #efefef;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	font-size: 12px;
+	font-weight: 700;
+	min-width: 50px;
+	position: relative;
+	text-align: center;
 }
 
 .badge-image {
@@ -50,14 +59,6 @@ ul.badge-links li:last-child {
 	width: 70px;
 }
 
-.group-list ul.badge-links {
-	margin-top: -10px;
-}
-
-.group-list ul.badge-links li {
-	position: relative;
-}
-
 .group-list .badge-image {
 	background: #68dfd2;
 	border: 2px solid #68dfd2;
@@ -65,8 +66,7 @@ ul.badge-links li:last-child {
 }
 
 .group-list ul.badge-links li {
-	margin-right: 1px;
-	width: 34px;
+	margin-right: 6px;
 }
 .group-list ul.badge-links li:last-child {
 	margin-right: 0px;
@@ -86,7 +86,6 @@ ul.badge-links li:last-child {
 }
 
 .group-list .badge-tooltip {
-	left: 0;
 }
 
 .tooltip-on .badge-tooltip {
@@ -125,6 +124,13 @@ ul.badge-links li:last-child {
 .badge-selector .badge-image {
 	width: 50px;
 }
+.badge-selector {
+	list-style-type: none;
+	padding-left: 0;
+}
 .badge-selector > li {
 	margin-bottom: 1em;
+}
+.badge-selector input {
+	margin-right: 16px;
 }
