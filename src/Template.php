@@ -76,7 +76,7 @@ class Template {
 		echo $html;
 	}
 
-	public static function badge_links_directory() {
+	public static function badge_links( $context ) {
 		wp_enqueue_style( 'openlab-badges' );
 		wp_enqueue_script( 'openlab-badges' );
 
@@ -84,8 +84,6 @@ class Template {
 
 		$badge_group  = new Group( $group_id );
 		$group_badges = $badge_group->get_badges();
-
-		$context = 'directory';
 
 		$html = '';
 		if ( $group_badges ) {

@@ -46,19 +46,6 @@ ul.badge-links li:last-child {
 	width: 100%;
 }
 
-.group-header-avatar div:first-of-type {
-	position: relative;
-}
-
-.group-header ul.badge-links {
-	bottom: -20px;
-	position: absolute;
-}
-
-.group-header ul.badge-links li {
-	width: 70px;
-}
-
 .group-list .badge-image {
 	background: #68dfd2;
 	border: 2px solid #68dfd2;
@@ -68,6 +55,7 @@ ul.badge-links li:last-child {
 .group-list ul.badge-links li {
 	margin-right: 6px;
 }
+
 .group-list ul.badge-links li:last-child {
 	margin-right: 0px;
 }
