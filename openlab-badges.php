@@ -35,4 +35,4 @@ spl_autoload_register(
 	}
 );
 
-add_action( 'bp_include', [ \OpenLab\Badges\App, 'init' ] );
+add_action( 'bp_include', [ '\OpenLab\Badges\App', 'init' ] );
