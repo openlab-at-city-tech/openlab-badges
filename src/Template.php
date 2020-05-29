@@ -105,12 +105,12 @@ class Template {
 	 */
 	public static function filter_group_args( $args ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['group_badge'] ) || 'all' === $_GET['group_badge'] ) {
+		if ( ! isset( $_GET['badges'] ) || 'all' === $_GET['badges'] || ! is_array( $_GET['badges'] ) ) {
 			return $args;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$badge_id = intval( $_GET['group_badge'] );
+		$badge_ids = array_map( 'intval', $_GET['badges'] );
 
 		// Tax query not currently supported for groups. See https://buddypress.trac.wordpress.org/ticket/4017.
 		// phpcs:disable
@@ -127,7 +127,7 @@ class Template {
 		*/
 		// phpcs:enable
 
-		$objects_in_term = bp_get_objects_in_term( $badge_id, 'openlab_badge' );
+		$objects_in_term = bp_get_objects_in_term( $badge_ids, 'openlab_badge' );
 		if ( ! $objects_in_term ) {
 			$objects_in_term = array( 0 );
 		}
