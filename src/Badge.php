@@ -21,6 +21,7 @@ class Badge implements Grantable {
 		'slug'       => null,
 		'image'      => null,
 		'link'       => null,
+		'position'   => null,
 	);
 
 	/**
@@ -64,6 +65,11 @@ class Badge implements Grantable {
 		if ( $link ) {
 			$this->set_link( $link );
 		}
+
+		$position = get_term_meta( $term->term_id, 'position', true );
+		if ( $position ) {
+			$this->set_position( $position );
+		}
 	}
 
 	/**
@@ -102,6 +108,7 @@ class Badge implements Grantable {
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
 		update_term_meta( $term_id, 'image', $this->get_image() );
 		update_term_meta( $term_id, 'link', $this->get_link() );
+		update_term_meta( $term_id, 'position', $this->get_position() );
 
 		return true;
 	}
@@ -171,6 +178,15 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Sets the position of a badge.
+	 *
+	 * @param int|string $position Position.
+	 */
+	public function set_position( $position ) {
+		$this->data['position'] = $position;
+	}
+
+	/**
 	 * Gets the ID of a badge.
 	 *
 	 * @return int
@@ -224,6 +240,15 @@ class Badge implements Grantable {
 	 */
 	public function get_link() {
 		return $this->data['link'];
+	}
+
+	/**
+	 * Gets the position for a badge.
+	 *
+	 * @return int
+	 */
+	public function get_position() {
+		return (int) $this->data['position'];
 	}
 
 	/**
@@ -332,6 +357,11 @@ class Badge implements Grantable {
 			<span class="badge-field-label"><?php esc_html_e( 'Link', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][link]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_link() ); ?>" />
 		</label>
+
+		<label>
+			<span class="badge-field-label"><?php esc_html_e( 'Position', 'openlab-badges' ); ?></span>
+			<input name="badges[<?php echo esc_attr( $id ); ?>][position]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_position() ); ?>" />
+		</label>
 		<?php
 	}
 
@@ -350,22 +380,44 @@ class Badge implements Grantable {
 		$r = array_merge(
 			array(
 				'hide_empty' => false,
-				'orderby'    => 'name',
+				'orderby'    => 'position',
 				'order'      => 'ASC',
 			),
 			$args
 		);
 
-		$terms = get_terms(
-			'openlab_badge',
-			array(
-				'hide_empty' => $r['hide_empty'],
-				'orderby'    => $r['orderby'],
-				'order'      => $r['order'],
-			)
-		);
+		$meta_query = null;
+		if ( 'position' === $r['orderby'] ) {
+			$orderby = 'position';
+			$order   = null;
+
+			$meta_query = [
+				'position' => [
+					'key' => 'position',
+				],
+			];
+		} else {
+			$orderby = $r['orderby'];
+			$order   = $r['order'];
+		}
+
+		$get_terms_args = [
+			'hide_empty' => $r['hide_empty'],
+			'orderby'    => $orderby,
+		];
+
+		if ( $order ) {
+			$get_terms_args['order'] = $order;
+		}
+
+		if ( $meta_query ) {
+			$get_terms_args['meta_query'] = $meta_query;
+		}
+
+		$terms = get_terms( 'openlab_badge', $get_terms_args );
 
 		// Override crummy filters.
+		/*
 		usort(
 			$terms,
 			function( $a, $b ) {
@@ -376,6 +428,7 @@ class Badge implements Grantable {
 				return strnatcasecmp( $a->name, $b->name );
 			}
 		);
+		*/
 
 		$badges = array_map(
 			function( $term ) {
