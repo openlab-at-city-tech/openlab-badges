@@ -386,16 +386,9 @@ class Badge implements Grantable {
 			$args
 		);
 
-		$meta_query = null;
 		if ( 'position' === $r['orderby'] ) {
 			$orderby = 'position';
 			$order   = null;
-
-			$meta_query = [
-				'position' => [
-					'key' => 'position',
-				],
-			];
 		} else {
 			$orderby = $r['orderby'];
 			$order   = $r['order'];
@@ -403,15 +396,10 @@ class Badge implements Grantable {
 
 		$get_terms_args = [
 			'hide_empty' => $r['hide_empty'],
-			'orderby'    => $orderby,
 		];
 
 		if ( $order ) {
 			$get_terms_args['order'] = $order;
-		}
-
-		if ( $meta_query ) {
-			$get_terms_args['meta_query'] = $meta_query;
 		}
 
 		$terms = get_terms( 'openlab_badge', $get_terms_args );
@@ -435,6 +423,13 @@ class Badge implements Grantable {
 				return new self( $term->term_id );
 			},
 			$terms
+		);
+
+		usort(
+			$badges,
+			function( $a, $b ) {
+				return $a->get_position() > $b->get_position();
+			}
 		);
 
 		return $badges;
