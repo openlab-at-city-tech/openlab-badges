@@ -38,6 +38,9 @@ ul.badge-links li:last-child {
 	padding: 0 3px;
 	position: relative;
 	text-align: center;
+}
+
+.group-badge .group-badge-shortname {
 	text-transform: uppercase;
 }
 

@@ -267,11 +267,14 @@ class Badge implements Grantable {
 
 		if ( 'single' === $context ) {
 			$badge_link_start = sprintf(
-				'<a href="%s">',
+				'<a class="group-badge-shortname" href="%s">',
 				esc_attr( $this->get_link() )
 			);
 
 			$badge_link_end = '</a>';
+		} else {
+			$badge_link_start = '<span class="group-badge-shortname">';
+			$badge_link_end   = '</span>';
 		}
 
 		$html  = '<div class="group-badge">';
