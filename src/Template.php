@@ -17,11 +17,6 @@ class Template {
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
 
-		//add_action( 'bp_group_header_after_avatar', array( __CLASS__, 'avatar_links_single_group_header' ) );
-		//add_action( 'bp_group_directory_after_avatar', array( __CLASS__, 'avatar_links_group_directory' ) );
-
-		//add_action( 'openlab_theme_after_group_description_directory', [ __CLASS__, 'badge_links_directory' ] );
-
 		add_filter( 'bp_before_has_groups_parse_args', array( __CLASS__, 'filter_group_args' ) );
 
 		add_action( 'groups_group_after_save', array( __CLASS__, 'save_group_settings' ) );
@@ -33,47 +28,6 @@ class Template {
 	public static function register_scripts() {
 		wp_register_style( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/css/openlab-badges.css', [], OLBADGES_VERSION );
 		wp_register_script( 'openlab-badges', OLBADGES_PLUGIN_URL . '/assets/js/openlab-badges.js', [ 'jquery' ], OLBADGES_VERSION, true );
-	}
-
-	/**
-	 * Gets the avatar links for the header of a single group page.
-	 */
-	public static function avatar_links_single_group_header() {
-		self::avatar_links( 'single' );
-	}
-
-	/**
-	 * Gets the avatar links for the listing in a group directory.
-	 */
-	public static function avatar_links_group_directory() {
-		self::avatar_links( 'directory' );
-	}
-
-	/**
-	 * Gets a set of avatar links.
-	 *
-	 * @param string $context Context. 'single' or 'directory'.
-	 */
-	public static function avatar_links( $context = 'single' ) {
-		wp_enqueue_style( 'openlab-badges' );
-		wp_enqueue_script( 'openlab-badges' );
-
-		$group_id = bp_get_group_id();
-
-		$badge_group  = new Group( $group_id );
-		$group_badges = $badge_group->get_badges();
-
-		$html = '';
-		if ( $group_badges ) {
-			$html .= '<ul class="badge-links">';
-			foreach ( $group_badges as $group_badge ) {
-				$html .= '<li>' . $group_badge->get_avatar_badge_html( $group_id, $context ) . '</li>';
-			}
-			$html .= '</ul>';
-		}
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $html;
 	}
 
 	public static function badge_links( $context ) {

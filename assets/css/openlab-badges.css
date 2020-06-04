@@ -44,19 +44,6 @@ ul.badge-links li:last-child {
 	text-transform: uppercase;
 }
 
-.badge-image {
-	background: #444;
-	border: 5px solid #444;
-	border-radius: 35px;
-	width: 100%;
-}
-
-.group-list .badge-image {
-	background: #68dfd2;
-	border: 2px solid #68dfd2;
-	border-radius: 17px;
-}
-
 .group-list ul.badge-links li {
 	margin-right: 6px;
 }
@@ -113,9 +100,6 @@ ul.badge-links li:last-child {
 /* Group admin */
 .badge-selector .avatar-badge {
 	display: inline-block;
-}
-.badge-selector .badge-image {
-	width: 50px;
 }
 .badge-selector {
 	list-style-type: none;

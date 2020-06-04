@@ -19,7 +19,6 @@ class Badge implements Grantable {
 		'name'       => null,
 		'short_name' => null,
 		'slug'       => null,
-		'image'      => null,
 		'link'       => null,
 		'position'   => null,
 	);
@@ -55,11 +54,6 @@ class Badge implements Grantable {
 			$short_name = $term->name;
 		}
 		$this->set_short_name( $short_name );
-
-		$image = get_term_meta( $term->term_id, 'image', true );
-		if ( $image ) {
-			$this->set_image( $image );
-		}
 
 		$link = get_term_meta( $term->term_id, 'link', true );
 		if ( $link ) {
@@ -106,7 +100,6 @@ class Badge implements Grantable {
 		}
 
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
-		update_term_meta( $term_id, 'image', $this->get_image() );
 		update_term_meta( $term_id, 'link', $this->get_link() );
 		update_term_meta( $term_id, 'position', $this->get_position() );
 
@@ -157,15 +150,6 @@ class Badge implements Grantable {
 	 */
 	public function set_slug( $slug ) {
 		$this->data['slug'] = $slug;
-	}
-
-	/**
-	 * Sets the image URL of a badge.
-	 *
-	 * @param string $image URL.
-	 */
-	public function set_image( $image ) {
-		$this->data['image'] = $image;
 	}
 
 	/**
@@ -222,15 +206,6 @@ class Badge implements Grantable {
 	 */
 	public function get_slug() {
 		return $this->data['slug'];
-	}
-
-	/**
-	 * Gets the image URL for a badge.
-	 *
-	 * @return string
-	 */
-	public function get_image() {
-		return $this->data['image'];
 	}
 
 	/**
@@ -291,42 +266,6 @@ class Badge implements Grantable {
 	}
 
 	/**
-	 * Builds the HTML for a badge avatar.
-	 *
-	 * @param int    $group_id Group ID.
-	 * @param string $context  'single' or 'directory'.
-	 */
-	public function get_avatar_badge_html( $group_id, $context = 'single' ) {
-		$group = groups_get_group( $group_id );
-
-		$tooltip_id = 'badge-tooltip-' . $group->slug . '-' . $this->get_slug();
-
-		$badge_link_start = '';
-		$badge_link_end   = '';
-
-		if ( 'single' === $context ) {
-			$badge_link_start = sprintf(
-				'<a href="%s">',
-				esc_attr( $this->get_link() )
-			);
-
-			$badge_link_end = '</a>';
-		}
-
-		$html  = '<div class="avatar-badge">';
-		$html .= $badge_link_start;
-		$html .= '<img class="badge-image" aria-describedby="' . esc_attr( $tooltip_id ) . '" src="' . esc_attr( $this->get_image() ) . '" alt="' . esc_attr( $this->get_name() ) . '" />';
-		$html .= $badge_link_end;
-
-		$html .= '<div id="' . esc_attr( $tooltip_id ) . '" class="badge-tooltip" role="tooltip">';
-		$html .= esc_html( $this->get_name() );
-		$html .= '</div>';
-		$html .= '</div>';
-
-		return $html;
-	}
-
-	/**
 	 * Outputs the HTML for editing a badge.
 	 */
 	public function edit_html() {
@@ -349,11 +288,6 @@ class Badge implements Grantable {
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Short Name', 'openlab-badges' ); ?></span>
 			<input name="badges[<?php echo esc_attr( $id ); ?>][short_name]" id="badge-<?php echo esc_attr( $slug ); ?>-short-name" value="<?php echo esc_attr( $short_name ); ?>" />
-		</label>
-
-		<label>
-			<span class="badge-field-label"><?php esc_html_e( 'Image URL', 'openlab-badges' ); ?></span>
-			<input name="badges[<?php echo esc_attr( $id ); ?>][image]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_image() ); ?>" />
 		</label>
 
 		<label>
