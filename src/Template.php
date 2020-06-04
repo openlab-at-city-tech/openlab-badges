@@ -142,9 +142,6 @@ class Template {
 				<li>
 					<input type="checkbox" value="<?php echo esc_attr( $badge->get_id() ); ?>" name="badge-selector[]" id="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>" <?php checked( in_array( $badge->get_id(), $group_badge_ids, true ) ); ?> />
 
-					<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php echo $badge->get_avatar_badge_html( $group_id ); ?>
-
 					<label for="badge-selector-<?php echo esc_attr( $badge->get_slug() ); ?>">
 						<?php echo esc_html( $badge->get_name() ); ?>
 					</label>
