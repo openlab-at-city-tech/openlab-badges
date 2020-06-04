@@ -85,12 +85,33 @@ class Template {
 		$badge_group  = new Group( $group_id );
 		$group_badges = $badge_group->get_badges();
 
+		$badge_links = [];
+		foreach ( $group_badges as $group_badge ) {
+			$badge_links[] = $group_badge->get_avatar_flag_html( $group_id, $context );
+		}
+
+		/**
+		 * Filters the badge links before assembling the list markup.
+		 *
+		 * @since 1.0
+		 *
+		 * @param array  $badge_links Array of links.
+		 * @param int    $group_id    ID of the group.
+		 * @param string $content     Context.
+		 */
+		$badge_links = apply_filters( 'openlab_badges_badge_links', $badge_links, $group_id, $context );
+
 		$html = '';
 		if ( $group_badges ) {
+			$badge_link_lis = array_map(
+				function( $link ) {
+					return '<li>' . $link . '</li>';
+				},
+				$badge_links
+			);
+
 			$html .= '<ul class="badge-links">';
-			foreach ( $group_badges as $group_badge ) {
-				$html .= '<li>' . $group_badge->get_avatar_flag_html( $group_id, $context ) . '</li>';
-			}
+			$html .= implode( "\n", $badge_link_lis );
 			$html .= '</ul>';
 		}
 
