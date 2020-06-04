@@ -176,6 +176,7 @@ class Admin {
 			$badge->set_short_name( $saved_badge['short_name'] );
 			$badge->set_link( $saved_badge['link'] );
 			$badge->set_position( (int) $saved_badge['position'] );
+			$badge->set_group_types( $saved_badge['group-types'] );
 			$badge->save();
 		}
 
@@ -205,6 +206,7 @@ class Admin {
 		$badge->set_short_name( $saved_badge['short_name'] );
 		$badge->set_link( $saved_badge['link'] );
 		$badge->set_position( $saved_badge['position'] );
+		$badge->set_group_types( $saved_badge['group-types'] );
 		$badge->save();
 
 		$redirect_to = add_query_arg( 'badge-action', 'created', self::admin_url() );

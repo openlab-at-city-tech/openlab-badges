@@ -69,4 +69,38 @@ class App {
 
 		return $caps;
 	}
+
+	/**
+	 * Fetches all group types on an installation.
+	 *
+	 * A wrapper for bp_groups_get_group_types() that allows the list to be filtered
+	 * in cases where the installation is not using BP group types.
+	 *
+	 * @return array
+	 */
+	public static function get_group_types() {
+		$group_types = array_map(
+			function( $term ) {
+				return [
+					'slug' => $term->slug,
+					'name' => $term->name,
+				];
+			},
+			bp_groups_get_group_types( [], 'objects' )
+		);
+
+		/**
+		 * Filters the group types to be used by OpenLab Badges.
+		 *
+		 * @since 1.0
+		 *
+		 * @param array {
+		 *   Info about badges.
+		 *
+		 *   @type string $slug Slug.
+		 *   @type string $name Name.
+		 * }
+		 */
+		return apply_filters( 'openlab_badges_get_group_types', $group_types );
+	}
 }

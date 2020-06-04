@@ -15,12 +15,13 @@ class Badge implements Grantable {
 	 * @var array
 	 */
 	private $data = array(
-		'id'         => null,
-		'name'       => null,
-		'short_name' => null,
-		'slug'       => null,
-		'link'       => null,
-		'position'   => null,
+		'id'          => null,
+		'name'        => null,
+		'short_name'  => null,
+		'slug'        => null,
+		'link'        => null,
+		'position'    => null,
+		'group_types' => [],
 	);
 
 	/**
@@ -64,6 +65,11 @@ class Badge implements Grantable {
 		if ( $position ) {
 			$this->set_position( $position );
 		}
+
+		$group_types = get_term_meta( $term->term_id, 'group_type', false );
+		if ( $group_types ) {
+			$this->set_group_types( $group_types );
+		}
 	}
 
 	/**
@@ -102,6 +108,12 @@ class Badge implements Grantable {
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
 		update_term_meta( $term_id, 'link', $this->get_link() );
 		update_term_meta( $term_id, 'position', $this->get_position() );
+
+		// Delete existing first.
+		delete_term_meta( $term_id, 'group_type' );
+		foreach ( $this->get_group_types() as $group_type ) {
+			add_term_meta( $term_id, 'group_type', $group_type );
+		}
 
 		return true;
 	}
@@ -171,6 +183,15 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Sets the group types for a badge.
+	 *
+	 * @param array $group_types Group type strings.
+	 */
+	public function set_group_types( $group_types ) {
+		$this->data['group_types'] = $group_types;
+	}
+
+	/**
 	 * Gets the ID of a badge.
 	 *
 	 * @return int
@@ -227,6 +248,15 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Gets the group types for a badge.
+	 *
+	 * @return int
+	 */
+	public function get_group_types() {
+		return $this->data['group_types'];
+	}
+
+	/**
 	 * Builds the HTML for a badge flag.
 	 *
 	 * @param int    $group_id Group ID.
@@ -269,36 +299,55 @@ class Badge implements Grantable {
 	 * Outputs the HTML for editing a badge.
 	 */
 	public function edit_html() {
-		$slug       = $this->get_slug();
-		$name       = $this->get_name();
-		$short_name = $this->get_short_name();
+		$slug        = $this->get_slug();
+		$name        = $this->get_name();
+		$short_name  = $this->get_short_name();
+		$group_types = $this->get_group_types();
+
+		$all_group_types = \OpenLab\Badges\App::get_group_types();
 
 		$id = $this->get_id();
 		if ( ! $id ) {
 			$id   = '_new';
 			$slug = '_new';
+
+			// All are checked by default for new badge.
+			$group_types = wp_list_pluck( $all_group_types, 'slug' );
 		}
 
 		?>
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Name', 'openlab-badges' ); ?></span>
-			<input name="badges[<?php echo esc_attr( $id ); ?>][name]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $name ); ?>" />
+			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][name]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $name ); ?>" />
 		</label>
 
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Short Name', 'openlab-badges' ); ?></span>
-			<input name="badges[<?php echo esc_attr( $id ); ?>][short_name]" id="badge-<?php echo esc_attr( $slug ); ?>-short-name" value="<?php echo esc_attr( $short_name ); ?>" />
+			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][short_name]" id="badge-<?php echo esc_attr( $slug ); ?>-short-name" value="<?php echo esc_attr( $short_name ); ?>" />
 		</label>
 
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Link', 'openlab-badges' ); ?></span>
-			<input name="badges[<?php echo esc_attr( $id ); ?>][link]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_link() ); ?>" />
+			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][link]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_link() ); ?>" />
 		</label>
 
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Position', 'openlab-badges' ); ?></span>
-			<input name="badges[<?php echo esc_attr( $id ); ?>][position]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_position() ); ?>" />
+			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][position]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_position() ); ?>" />
 		</label>
+
+		<fieldset>
+			<legend class="badge-field-label">Group Types</legend>
+
+			<?php foreach ( $all_group_types as $group_type ) : ?>
+				<label>
+					<input type="checkbox" name="badges[<?php echo esc_attr( $id ); ?>][group-types][]" value="<?php echo esc_attr( $group_type['slug'] ); ?>" <?php checked( in_array( $group_type['slug'], $group_types ) ); ?> /> <?php echo esc_html( $group_type['name'] ); ?>
+				</label>
+			<?php endforeach; ?>
+
+			<p class="description"><?php esc_html_e( 'Select the group types associated with this badge. This will determine which badges can be selected when editing a group, and which badge filters appear in group directories.', 'openlab-badges' ); ?></p>
+
+		</fieldset>
 		<?php
 	}
 
