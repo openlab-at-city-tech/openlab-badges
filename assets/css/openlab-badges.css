@@ -35,8 +35,10 @@ ul.badge-links li:last-child {
 	font-size: 12px;
 	font-weight: 700;
 	min-width: 50px;
+	padding: 0 3px;
 	position: relative;
 	text-align: center;
+	text-transform: uppercase;
 }
 
 .badge-image {
