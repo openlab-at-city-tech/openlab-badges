@@ -365,9 +365,10 @@ class Badge implements Grantable {
 	public static function get( $args = array() ) {
 		$r = array_merge(
 			array(
-				'hide_empty' => false,
-				'orderby'    => 'position',
-				'order'      => 'ASC',
+				'hide_empty'  => false,
+				'orderby'     => 'position',
+				'order'       => 'ASC',
+				'group_types' => null,
 			),
 			$args
 		);
@@ -381,14 +382,24 @@ class Badge implements Grantable {
 		}
 
 		$get_terms_args = [
+			'taxonomy'   => 'openlab_badge',
 			'hide_empty' => $r['hide_empty'],
 		];
+
+		if ( null !== $r['group_types'] ) {
+			$get_terms_args['meta_query'] = [
+				'group_type' => [
+					'key'   => 'group_type',
+					'value' => $r['group_types'],
+				],
+			];
+		}
 
 		if ( $order ) {
 			$get_terms_args['order'] = $order;
 		}
 
-		$terms = get_terms( 'openlab_badge', $get_terms_args );
+		$terms = get_terms( $get_terms_args );
 
 		// Override crummy filters.
 		/*
