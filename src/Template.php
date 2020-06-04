@@ -130,7 +130,11 @@ class Template {
 			$group_badges
 		);
 
-		$all_badges = Badge::get();
+		$all_badges = Badge::get(
+			[
+				'group_types' => $badge_group->get_group_type(),
+			]
+		);
 
 		wp_enqueue_style( 'openlab-badges' );
 		wp_enqueue_script( 'openlab-badges' );

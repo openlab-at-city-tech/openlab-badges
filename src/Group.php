@@ -64,6 +64,27 @@ class Group {
 	}
 
 	/**
+	 * Gets the group type of the current group.
+	 *
+	 * This wrapper exists to provide a filter point.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_group_type() {
+		$group_type = bp_groups_get_group_type( $this->get_group_id(), true );
+
+		/**
+		 * Filters the group type of a group, as used by OpenLab Badges.
+		 *
+		 * @param string $type     Group type.
+		 * @param int    $group_id Group ID.
+		 */
+		return apply_filters( 'openlab_badges_group_type', $group_type, $this->get_group_id() );
+	}
+
+	/**
 	 * Grants a badge to a group.
 	 *
 	 * @param Grantable $badge Badge object.
