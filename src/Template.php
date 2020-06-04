@@ -137,6 +137,8 @@ class Template {
 			$badge_query_args['group_type'] = $group_type;
 		}
 
+		$all_badges = Badge::get( $badge_query_args );
+
 		wp_enqueue_style( 'openlab-badges' );
 		wp_enqueue_script( 'openlab-badges' );
 

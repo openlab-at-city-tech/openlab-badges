@@ -365,10 +365,10 @@ class Badge implements Grantable {
 	public static function get( $args = array() ) {
 		$r = array_merge(
 			array(
-				'hide_empty'  => false,
-				'orderby'     => 'position',
-				'order'       => 'ASC',
-				'group_types' => null,
+				'hide_empty' => false,
+				'orderby'    => 'position',
+				'order'      => 'ASC',
+				'group_type' => null,
 			),
 			$args
 		);
@@ -386,11 +386,11 @@ class Badge implements Grantable {
 			'hide_empty' => $r['hide_empty'],
 		];
 
-		if ( null !== $r['group_types'] ) {
+		if ( null !== $r['group_type'] ) {
 			$get_terms_args['meta_query'] = [
 				'group_type' => [
 					'key'   => 'group_type',
-					'value' => $r['group_types'],
+					'value' => $r['group_type'],
 				],
 			];
 		}
