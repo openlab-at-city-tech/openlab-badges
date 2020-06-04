@@ -102,7 +102,7 @@ class Template {
 		$badge_links = apply_filters( 'openlab_badges_badge_links', $badge_links, $group_id, $context );
 
 		$html = '';
-		if ( $group_badges ) {
+		if ( $badge_links ) {
 			$badge_link_lis = array_map(
 				function( $link ) {
 					return '<li>' . $link . '</li>';
