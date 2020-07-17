@@ -55,11 +55,11 @@ ul.badge-links li:last-child {
 
 .badge-tooltip {
 	background: #fff;
-	border: 2px solid #aaa;
-	bottom: -50px;
+	border: 1px solid #aaa;
+	bottom: -35px;
 	display: none;
-	left: 13px;
-	padding: 8px;
+	left: 5px;
+	padding: 5px;
 	position: absolute !important;
 	white-space: nowrap;
 	width: auto;
@@ -88,14 +88,14 @@ ul.badge-links li:last-child {
 .badge-tooltip:after {
 	border-color: rgba(136, 183, 213, 0);
 	border-bottom-color: #fff;
-	border-width: 10px;
-	margin-left: -10px;
+	border-width: 5px;
+	margin-left: -5px;
 }
 .badge-tooltip:before {
 	border-color: rgba(194, 225, 245, 0);
 	border-bottom-color: #aaa;
-	border-width: 14px;
-	margin-left: -14px;
+	border-width: 6px;
+	margin-left: -6px;
 }
 
 /* Group admin */
