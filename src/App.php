@@ -80,10 +80,10 @@ class App {
 	 */
 	public static function get_group_types() {
 		$group_types = array_map(
-			function( $term ) {
+			function( $group_type ) {
 				return [
-					'slug' => $term->slug,
-					'name' => $term->name,
+					'slug' => $group_type->name,
+					'name' => $group_type->labels['name'],
 				];
 			},
 			bp_groups_get_group_types( [], 'objects' )
