@@ -60,7 +60,14 @@ class Group {
 			},
 			$terms
 		);
-		return $badges;
+
+		/**
+		 * Filters the badges belonging to a group.
+		 *
+		 * @param array                $badges List of badges.
+		 * @param OpenLab\Badges\Group $group  Badge-group object.
+		 */
+		return apply_filters( 'openlab_badges_badges_of_group', $badges, $this );
 	}
 
 	/**
