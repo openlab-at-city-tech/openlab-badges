@@ -15,13 +15,14 @@ class Badge implements Grantable {
 	 * @var array
 	 */
 	private $data = array(
-		'id'          => null,
-		'name'        => null,
-		'short_name'  => null,
-		'slug'        => null,
-		'link'        => null,
-		'position'    => null,
-		'group_types' => [],
+		'id'             => null,
+		'name'           => null,
+		'short_name'     => null,
+		'slug'           => null,
+		'link'           => null,
+		'position'       => null,
+		'group_types'    => [],
+		'can_be_deleted' => true,
 	);
 
 	/**
@@ -70,6 +71,13 @@ class Badge implements Grantable {
 		if ( $group_types ) {
 			$this->set_group_types( $group_types );
 		}
+
+		$can_be_deleted = get_term_meta( $term->term_id, 'can_be_deleted', true );
+		if ( '0' === $can_be_deleted ) {
+			$this->set_can_be_deleted( false );
+		} else {
+			$this->set_can_be_deleted( true );
+		}
 	}
 
 	/**
@@ -108,6 +116,7 @@ class Badge implements Grantable {
 		update_term_meta( $term_id, 'short_name', $this->get_short_name() );
 		update_term_meta( $term_id, 'link', $this->get_link() );
 		update_term_meta( $term_id, 'position', $this->get_position() );
+		update_term_meta( $term_id, 'can_be_deleted', (int) $this->get_can_be_deleted() );
 
 		// Delete existing first.
 		delete_term_meta( $term_id, 'group_type' );
@@ -192,6 +201,15 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Sets the can_be_deleted flag for badge.
+	 *
+	 * @param bool $can_be_deleted Whether the badge can be deleted by the admin.
+	 */
+	public function set_can_be_deleted( $can_be_deleted ) {
+		$this->data['can_be_deleted'] = (bool) $can_be_deleted;
+	}
+
+	/**
 	 * Gets the ID of a badge.
 	 *
 	 * @return int
@@ -254,6 +272,15 @@ class Badge implements Grantable {
 	 */
 	public function get_group_types() {
 		return $this->data['group_types'];
+	}
+
+	/**
+	 * Gets the can_be_deleted flag for a badge.
+	 *
+	 * @return bool
+	 */
+	public function get_can_be_deleted() {
+		return (bool) $this->data['can_be_deleted'];
 	}
 
 	/**

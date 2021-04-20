@@ -81,14 +81,16 @@ class Admin {
 			<form method="post" action="<?php echo esc_attr( self::admin_url() ); ?>">
 				<ol class="badge-admin">
 				<?php foreach ( $badges as $badge ) : ?>
-					<li>
-						<?php $badge->edit_html(); ?>
-						<?php
-						$delete_url = add_query_arg( 'delete-badge', $badge->get_id(), self::admin_url() );
-						$delete_url = wp_nonce_url( $delete_url, 'openlab-badges-delete' );
-						?>
-						<a class="badge-delete" href="<?php echo esc_attr( $delete_url ); ?>"><?php esc_html_e( 'Delete Badge', 'openlab-badges' ); ?></a>
-					</li>
+						<li>
+							<?php $badge->edit_html(); ?>
+							<?php if ( $badge->get_can_be_deleted() ) : ?>
+								<?php
+								$delete_url = add_query_arg( 'delete-badge', $badge->get_id(), self::admin_url() );
+								$delete_url = wp_nonce_url( $delete_url, 'openlab-badges-delete' );
+								?>
+							<a class="badge-delete" href="<?php echo esc_attr( $delete_url ); ?>"><?php esc_html_e( 'Delete Badge', 'openlab-badges' ); ?></a>
+							<?php endif; ?>
+						</li>
 				<?php endforeach; ?>
 				</ol>
 
