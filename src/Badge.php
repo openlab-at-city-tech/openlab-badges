@@ -23,6 +23,7 @@ class Badge implements Grantable {
 		'position'       => null,
 		'group_types'    => [],
 		'can_be_deleted' => true,
+		'can_be_granted' => true,
 	);
 
 	/**
@@ -78,6 +79,13 @@ class Badge implements Grantable {
 		} else {
 			$this->set_can_be_deleted( true );
 		}
+
+		$can_be_granted = get_term_meta( $term->term_id, 'can_be_granted', true );
+		if ( '0' === $can_be_granted ) {
+			$this->set_can_be_granted( false );
+		} else {
+			$this->set_can_be_granted( true );
+		}
 	}
 
 	/**
@@ -117,6 +125,7 @@ class Badge implements Grantable {
 		update_term_meta( $term_id, 'link', $this->get_link() );
 		update_term_meta( $term_id, 'position', $this->get_position() );
 		update_term_meta( $term_id, 'can_be_deleted', (int) $this->get_can_be_deleted() );
+		update_term_meta( $term_id, 'can_be_granted', (int) $this->get_can_be_granted() );
 
 		// Delete existing first.
 		delete_term_meta( $term_id, 'group_type' );
@@ -210,6 +219,15 @@ class Badge implements Grantable {
 	}
 
 	/**
+	 * Sets the can_be_granted flag for badge.
+	 *
+	 * @param bool $can_be_granted Whether the badge can be granted manually.
+	 */
+	public function set_can_be_granted( $can_be_granted ) {
+		$this->data['can_be_granted'] = (bool) $can_be_granted;
+	}
+
+	/**
 	 * Gets the ID of a badge.
 	 *
 	 * @return int
@@ -281,6 +299,15 @@ class Badge implements Grantable {
 	 */
 	public function get_can_be_deleted() {
 		return (bool) $this->data['can_be_deleted'];
+	}
+
+	/**
+	 * Gets the can_be_granted flag for a badge.
+	 *
+	 * @return bool
+	 */
+	public function get_can_be_granted() {
+		return (bool) $this->data['can_be_granted'];
 	}
 
 	/**
@@ -397,6 +424,7 @@ class Badge implements Grantable {
 		$r = array_merge(
 			array(
 				'hide_empty' => false,
+				'grantable'  => null,
 				'orderby'    => 'position',
 				'order'      => 'ASC',
 				'group_type' => null,
@@ -415,14 +443,20 @@ class Badge implements Grantable {
 		$get_terms_args = [
 			'taxonomy'   => 'openlab_badge',
 			'hide_empty' => $r['hide_empty'],
+			'meta_query' => [],
 		];
 
 		if ( null !== $r['group_type'] ) {
-			$get_terms_args['meta_query'] = [
-				'group_type' => [
-					'key'   => 'group_type',
-					'value' => $r['group_type'],
-				],
+			$get_terms_args['meta_query']['group_type'] = [
+				'key'   => 'group_type',
+				'value' => $r['group_type'],
+			];
+		}
+
+		if ( null !== $r['grantable'] ) {
+			$get_terms_args['meta_query']['grantable'] = [
+				'key'   => 'can_be_granted',
+				'value' => $r['grantable'] ? '1' : '0',
 			];
 		}
 

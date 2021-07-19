@@ -130,7 +130,9 @@ class Template {
 			$group_badges
 		);
 
-		$badge_query_args = [];
+		$badge_query_args = [
+			'grantable' => true,
+		];
 
 		$group_type = $badge_group->get_group_type();
 		if ( $group_type ) {
