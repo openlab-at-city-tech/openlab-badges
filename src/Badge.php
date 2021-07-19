@@ -340,6 +340,10 @@ class Badge implements Grantable {
 
 			// All are checked by default for new badge.
 			$group_types = wp_list_pluck( $all_group_types, 'slug' );
+
+			$position = $this->get_next_available_position();
+		} else {
+			$position = $this->get_position();
 		}
 
 		?>
@@ -360,7 +364,7 @@ class Badge implements Grantable {
 
 		<label>
 			<span class="badge-field-label"><?php esc_html_e( 'Position', 'openlab-badges' ); ?></span>
-			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][position]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $this->get_position() ); ?>" />
+			<input type="text" name="badges[<?php echo esc_attr( $id ); ?>][position]" id="badge-<?php echo esc_attr( $slug ); ?>-name" value="<?php echo esc_attr( $position ); ?>" />
 		</label>
 
 		<fieldset>
@@ -457,5 +461,26 @@ class Badge implements Grantable {
 		);
 
 		return $badges;
+	}
+
+	/**
+	 * Gets the next available position for a badge.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return int
+	 */
+	protected function get_next_available_position() {
+		$all_badges = self::get();
+
+		$highest_position = 0;
+		foreach ( $all_badges as $badge ) {
+			$badge_position = $badge->get_position();
+			if ( $badge_position > $highest_position ) {
+				$highest_position = $badge_position;
+			}
+		}
+
+		return $highest_position + 1;
 	}
 }
