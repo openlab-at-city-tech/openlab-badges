@@ -78,6 +78,11 @@ class Admin {
 			<h1><i class="dashicons dashicons-carrot"></i> <?php esc_html_e( 'Badges', 'openlab-badges' ); ?></h1>
 
 			<h2><?php esc_html_e( 'Manage existing badges', 'openlab-badges' ); ?></h2>
+
+			<p><?php esc_html_e( 'Custom badges can be created and modified below, and assigned to individual groups by network administrators. These badges are displayed in group directories and on group home pages, and can be used to find and filter groups in the directories.', 'openlab-badges' ); ?>
+
+			<?php do_action( 'openlab_badges_after_admin_helper_text' ); ?>
+
 			<form method="post" action="<?php echo esc_attr( self::admin_url() ); ?>">
 				<ol class="badge-admin">
 				<?php foreach ( $badges as $badge ) : ?>
