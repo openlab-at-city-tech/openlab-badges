@@ -61,6 +61,21 @@ class Group {
 			$terms
 		);
 
+		// Sort by position.
+		usort(
+			$badges,
+			function( $badge_a, $badge_b ) {
+				$pos_a = $badge_a->get_position();
+				$pos_b = $badge_b->get_position();
+
+				if ( $pos_a === $pos_b ) {
+					return 0;
+				}
+
+				return $pos_a > $pos_b ? 1 : -1;
+			}
+		);
+
 		/**
 		 * Filters the badges belonging to a group.
 		 *
