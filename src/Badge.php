@@ -481,7 +481,7 @@ class Badge implements Grantable {
 		*/
 
 		$badges = array_map(
-			function( $term ) {
+			function ( $term ) {
 				return new self( $term->term_id );
 			},
 			$terms
@@ -489,8 +489,12 @@ class Badge implements Grantable {
 
 		usort(
 			$badges,
-			function( $a, $b ) {
-				return $a->get_position() > $b->get_position();
+			function ( $a, $b ) {
+				if ( $a->get_position() === $b->get_position() ) {
+					return 0;
+				}
+
+				return $a->get_position() > $b->get_position() ? 1 : -1;
 			}
 		);
 
